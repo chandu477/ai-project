@@ -1,0 +1,25 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: users-backend
+  # In-memory H2 by default (data resets on restart). Run with the "postgres" profile to use PostgreSQL.
+  datasource:
+    url: jdbc:h2:mem:users;MODE=PostgreSQL;DB_CLOSE_DELAY=-1
+    username: sa
+    password: ""
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    # {vendor} resolves to h2 or postgresql, since the demo seed SQL is database-specific.
+    locations: classpath:db/migration,classpath:db/seed/{vendor}
+  mvc:
+    problemdetails:
+      enabled: true
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html

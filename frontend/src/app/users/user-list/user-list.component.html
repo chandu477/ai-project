@@ -1,0 +1,59 @@
+<main class="container">
+  <header class="header">
+    <h1>Users</h1>
+    <p class="status" role="status" aria-live="polite">
+      @if (loading()) {
+        Loading…
+      }
+    </p>
+  </header>
+
+  @if (failed()) {
+    <div class="error" role="alert">
+      Could not load users.
+      <button type="button" (click)="retry()">Retry</button>
+    </div>
+  }
+
+  @if (page(); as page) {
+    @if (page.totalElements === 0) {
+      <section class="empty-card" aria-labelledby="empty-title">
+        <h2 id="empty-title">No data available</h2>
+        <p>There are no users to display yet.</p>
+      </section>
+    } @else {
+      <table [class.is-loading]="loading()">
+        <thead>
+          <tr>
+            @for (column of columns(); track column.field) {
+              <th scope="col" [class.numeric]="column.numeric" [attr.aria-sort]="column.ariaSort">
+                <button type="button" class="sort-button" (click)="sortBy(column.field)">
+                  {{ column.label }}
+                  <span class="indicator" aria-hidden="true">{{ column.indicator }}</span>
+                </button>
+              </th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (user of page.content; track user.id) {
+            <tr>
+              <td>{{ user.username }}</td>
+              <td class="numeric">{{ user.yearsOfExperience }}</td>
+              <td class="numeric">{{ user.orderCount }}</td>
+              <td class="numeric">{{ user.monthlySalary | number: '1.2-2' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+
+      <nav class="pagination" aria-label="Pagination">
+        <button type="button" (click)="goToPage(page.page - 1)" [disabled]="page.page === 0">Previous</button>
+        <span>Page {{ page.page + 1 }} of {{ page.totalPages }} · {{ page.totalElements }} users</span>
+        <button type="button" (click)="goToPage(page.page + 1)" [disabled]="page.page + 1 >= page.totalPages">
+          Next
+        </button>
+      </nav>
+    }
+  }
+</main>
