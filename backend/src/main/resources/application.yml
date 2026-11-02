@@ -2,6 +2,9 @@ server:
   port: 8081
 
 spring:
+  # Secrets (ANTHROPIC_API_KEY, DB_*) can live in a git-ignored .env (KEY=VALUE) at the repo root or in backend/.
+  config:
+    import: optional:file:.env[.properties],optional:file:../.env[.properties]
   application:
     name: users-backend
   # In-memory H2 by default (data resets on restart). Run with the "postgres" profile to use PostgreSQL.
@@ -16,10 +19,22 @@ spring:
   flyway:
     # {vendor} resolves to h2 or postgresql, since the demo seed SQL is database-specific.
     locations: classpath:db/migration,classpath:db/seed/{vendor}
-  mvc:
-    problemdetails:
-      enabled: true
+  jackson:
+    deserialization:
+      # 7.9 for a whole-number field is a 400, not silently 7.
+      accept-float-as-int: false
 
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
+
+# Claude-powered salary recommendation. The API key is read from ANTHROPIC_API_KEY; without it,
+# the advisor is off and recommendations use the statistical estimate.
+salary-advisor:
+  enabled: true
+  model: claude-opus-5-5
+  effort: low
+  timeout: 8s
+  max-retries: 1
+  # Claude calls allowed at once; beyond that the statistical estimate is returned immediately.
+  max-concurrent-calls: 4

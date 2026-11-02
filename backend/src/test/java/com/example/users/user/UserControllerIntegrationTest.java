@@ -68,12 +68,12 @@ class UserControllerIntegrationTest {
         mockMvc.perform(get(USERS_URL).param("sort", "yearsOfExperience").param("direction", "desc"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].username").value("user01"))
-                .andExpect(jsonPath("$.content[0].yearsOfExperience").value(25));
+                .andExpect(jsonPath("$.content[0].yearsOfExperience").value(25.0));
 
         mockMvc.perform(get(USERS_URL).param("sort", "yearsOfExperience").param("direction", "asc"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].username").value("user25"))
-                .andExpect(jsonPath("$.content[0].yearsOfExperience").value(1));
+                .andExpect(jsonPath("$.content[0].yearsOfExperience").value(1.0));
     }
 
     @Test

@@ -1,8 +1,6 @@
 # Local PostgreSQL: run with --spring.profiles.active=postgres.
-# Secrets live in a git-ignored .env (KEY=VALUE) at the repo root or in backend/.
+# Secrets live in a git-ignored .env (see application.yml).
 spring:
-  config:
-    import: optional:file:.env[.properties],optional:file:../.env[.properties]
   datasource:
     url: ${DB_URL:jdbc:postgresql://localhost:5432/usersdb}
     username: ${DB_USERNAME:users_app}

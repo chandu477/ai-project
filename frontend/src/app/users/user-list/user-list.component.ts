@@ -1,6 +1,7 @@
 import { DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { RouterLink } from '@angular/router';
 import { catchError, map, of, switchMap } from 'rxjs';
 
 import { Page, SortDirection, SortField, UserQuery, UserSummary } from '../user.model';
@@ -30,7 +31,7 @@ const SORT_INDICATOR: Record<SortDirection, string> = { asc: '▲', desc: '▼' 
 
 @Component({
   selector: 'app-user-list',
-  imports: [DecimalPipe],
+  imports: [DecimalPipe, RouterLink],
   templateUrl: './user-list.component.html',
   styleUrl: './user-list.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

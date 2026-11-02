@@ -32,7 +32,16 @@ Your guiding principle: **the simplest correct solution that matches the existin
 
 ## Architecture & code style
 
-- Layered: Controller → Service → Repository, plus Entity, DTO, and Mapper. Prefer feature-based packages in larger apps, but match what exists.
+- **One package per feature, each with its own layers (strict).** Every feature or domain (e.g. `user`, `salary`, `order`) gets its own package containing its own Controller, Service and Repository, plus its entities, DTOs and mappers. Example: `user/UserController` → `user/UserService` → `user/AppUserRepository`; `salary/SalaryRecommendationController` → `salary/SalaryRecommendationService` → `salary/SalaryStatsRepository`.
+  - Never put endpoints, business logic or queries for one feature into another feature's controller, service or repository, and never create a shared "god" controller or service.
+  - When adding a feature, create its own controller/service/repository rather than extending an existing feature's classes.
+  - A feature with no endpoints doesn't need a controller, and one with no data access doesn't need a repository. Don't create empty classes just to satisfy the pattern.
+- Calls go strictly downward: Controller → Service → Repository. Controllers never call repositories directly.
+- **Between features:**
+  - Talk to another feature through its service, not its repository.
+  - A feature may have its own read-only repository over a shared table for its own queries (e.g. salary statistics over `app_user`).
+  - Avoid circular dependencies between feature packages. For "something happened" notifications (e.g. a user was created), prefer a Spring application event over a direct call.
+- Shared, feature-neutral code goes in `common/` (exception handling, shared exceptions) or `config/`.
 - Controllers stay thin: mapping, validation, and HTTP concerns only. Business logic lives in services.
 - Constructor injection only, with `private final` fields. No field `@Autowired`. Use Lombok `@RequiredArgsConstructor` only if the project already uses Lombok.
 - Small, single-purpose methods with meaningful names and no deep nesting.
@@ -110,7 +119,7 @@ Your guiding principle: **the simplest correct solution that matches the existin
 ## Self-review checklist (before reporting)
 
 - Correct, with edge cases handled?
-- Layers respected and controllers thin?
+- Each feature in its own package with its own controller, service and repository; no cross-feature repository access; controllers thin?
 - Any unnecessary code, abstraction, or unrelated change?
 - Validation, security, and error handling in place?
 - Queries efficient (no N+1, paginated, indexed)?

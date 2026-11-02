@@ -22,3 +22,17 @@ export interface Page<T> {
   totalElements: number;
   totalPages: number;
 }
+
+export interface CreateUserRequest {
+  username: string;
+  yearsOfExperience: number;
+  monthlySalary: number;
+}
+
+// RFC 9457 error body. `errors` maps form field name -> message on 400.
+export interface ProblemDetail {
+  title?: string;
+  detail?: string;
+  status?: number;
+  errors?: Record<string, string>;
+}

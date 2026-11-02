@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { Page, UserQuery, UserSummary } from './user.model';
+import { CreateUserRequest, Page, UserQuery, UserSummary } from './user.model';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
@@ -13,5 +13,13 @@ export class UserService {
       fromObject: { page: query.page, sort: query.sort, direction: query.direction },
     });
     return this.http.get<Page<UserSummary>>('/api/users', { params });
+  }
+
+  createUser(request: CreateUserRequest): Observable<UserSummary> {
+    return this.http.post<UserSummary>('/api/users', request);
+  }
+
+  getUser(id: number): Observable<UserSummary> {
+    return this.http.get<UserSummary>(`/api/users/${id}`);
   }
 }

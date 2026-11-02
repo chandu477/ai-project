@@ -1,4 +1,4 @@
-package com.example.users.user;
+package com.example.users.order;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,6 +9,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+
+import com.example.users.user.AppUser;
 
 import java.math.BigDecimal;
 

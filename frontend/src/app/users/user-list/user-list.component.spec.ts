@@ -1,6 +1,7 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, TestRequest, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { Page, UserSummary } from '../user.model';
 import { UserListComponent } from './user-list.component';
@@ -51,7 +52,7 @@ describe('UserListComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [UserListComponent],
-      providers: [provideHttpClient(), provideHttpClientTesting()],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
     });
     httpTesting = TestBed.inject(HttpTestingController);
     fixture = TestBed.createComponent(UserListComponent);
@@ -143,5 +144,25 @@ describe('UserListComponent', () => {
 
     expect(element.querySelector('[role="alert"]')).toBeNull();
     expect(element.querySelectorAll('tbody tr').length).toBe(2);
+  });
+
+  it('shows experience without a trailing .0', () => {
+    expectUsersRequest('0', 'username', 'asc').flush(
+      pageOf([
+        { id: 3, username: 'cy', orderCount: 1, monthlySalary: 40000, yearsOfExperience: 2.5 },
+        { id: 4, username: 'di', orderCount: 1, monthlySalary: 40000, yearsOfExperience: 12.0 },
+      ]),
+    );
+    render();
+
+    const cells = element.querySelectorAll('tbody tr td:nth-child(2)');
+    expect(cells[0].textContent?.trim()).toBe('2.5');
+    expect(cells[1].textContent?.trim()).toBe('12');
+  });
+
+  it('links to the add-user page', () => {
+    const link = element.querySelector<HTMLAnchorElement>('a[href="/users/new"]');
+    expect(link?.textContent).toContain('Add new user');
+    httpTesting.expectOne((r) => r.url === '/api/users');
   });
 });

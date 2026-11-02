@@ -18,6 +18,6 @@ public record UserSummary(
         @Schema(description = "Salary per month", example = "55000.00")
         BigDecimal monthlySalary,
 
-        @Schema(description = "Years of professional experience", example = "8")
-        int yearsOfExperience) {
+        @Schema(description = "Years of professional experience in half-year steps", example = "2.5")
+        BigDecimal yearsOfExperience) {
 }

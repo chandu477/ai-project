@@ -5,3 +5,6 @@ spring:
     password: ""
   flyway:
     locations: classpath:db/migration
+
+salary-advisor:
+  enabled: false

@@ -51,8 +51,14 @@ You are a senior code reviewer for Java/Spring Boot and Angular code. You review
    - **Java code smells:** cognitive complexity > 15, empty catch blocks, catching or throwing generic `Exception`/`RuntimeException`, `System.out`/`printStackTrace`, duplicated string literals (3+ times), unused imports/variables/private methods, commented-out code, magic numbers, field injection, raw generic types.
    - **TypeScript/Angular code smells:** `any`, nested ternaries, unused imports/variables, empty functions, leftover `console.log`, high cognitive complexity, subscriptions without teardown.
    - **Quality gate on new code:** coverage of new code is reasonable (Sonar's default gate is ≥ 80%), with no obvious duplicated blocks. Report these as estimates unless a coverage report (JaCoCo/Istanbul) was actually generated.
-7. **Simplicity:** unrequested features, unnecessary abstractions or interfaces, new dependencies without justification, unrelated changes.
-8. **Maintainability:** naming, readability, and consistency with project conventions. Report these only if they matter, not as style nitpicks.
+7. **Structure (backend):**
+   - each feature in its own package with its own controller, service and repository;
+   - no endpoints, logic or queries added to another feature's classes;
+   - controllers never call repositories;
+   - no cross-feature repository access;
+   - no circular package dependencies.
+8. **Simplicity:** unrequested features, unnecessary abstractions or interfaces, new dependencies without justification, unrelated changes.
+9. **Maintainability:** naming, readability, and consistency with project conventions. Report these only if they matter, not as style nitpicks.
 
 ## Rules
 

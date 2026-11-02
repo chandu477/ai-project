@@ -7,5 +7,10 @@ export const routes: Routes = [
     title: 'Users',
     loadComponent: () => import('./users/user-list/user-list.component').then((m) => m.UserListComponent),
   },
+  {
+    path: 'users/new',
+    title: 'Add user',
+    loadComponent: () => import('./users/add-user/add-user.component').then((m) => m.AddUserComponent),
+  },
   { path: '**', redirectTo: 'users' },
 ];

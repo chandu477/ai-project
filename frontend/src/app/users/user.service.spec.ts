@@ -34,4 +34,25 @@ describe('UserService', () => {
 
     expect(result).toEqual(response);
   });
+
+  it('posts a new user', () => {
+    const body = { username: 'neha.k', yearsOfExperience: 7, monthlySalary: 82000 };
+    let result: UserSummary | undefined;
+
+    service.createUser(body).subscribe((user) => (result = user));
+
+    const req = httpTesting.expectOne('/api/users');
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual(body);
+    req.flush({ id: 1001, orderCount: 0, ...body });
+    expect(result?.id).toBe(1001);
+  });
+
+  it('gets a user by id', () => {
+    service.getUser(5).subscribe();
+
+    const req = httpTesting.expectOne('/api/users/5');
+    expect(req.request.method).toBe('GET');
+    req.flush({ id: 5, username: 'a', orderCount: 0, monthlySalary: 1, yearsOfExperience: 1 });
+  });
 });
