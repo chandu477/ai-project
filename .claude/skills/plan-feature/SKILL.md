@@ -80,6 +80,7 @@ Order the tasks so each one leaves the build green, and assign each to an agent:
 1. **Backend first** (`backend-engineer`): migration → entity/query → service → controller + Swagger → tests. The API contract must exist before the UI uses it.
 2. **Frontend** (`angular-architect`): model → service → component/template → specs.
 3. **Review** (`code-reviewer`): a final independent review of the whole change.
+4. **Verify** (`release-verifier`): after review fixes, prove the change works: clean-snapshot build, all tests, a smoke test of the running app and the frontend/backend contract. The feature is done only on a `SHIP` verdict.
 
 Each task needs:
 - what to change (files or areas),
@@ -140,5 +141,6 @@ Scale the plan to the feature. A new sortable column needs half a page; a new ed
 | # | Agent | Task | Verify | Size |
 |---|-------|------|--------|------|
 | 1 | backend-engineer | ... | `mvn test` | S |
-| n | code-reviewer | Review the full change | review verdict | S |
+| n-1 | code-reviewer | Review the full change | review verdict | S |
+| n | release-verifier | Verify the change is shippable | `SHIP` verdict | S |
 ```

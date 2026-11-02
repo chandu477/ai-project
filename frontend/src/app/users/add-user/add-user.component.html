@@ -1,0 +1,117 @@
+<main class="container">
+  <header class="header">
+    <h1>Add new user</h1>
+    <a class="button" routerLink="/users">Back to users</a>
+  </header>
+
+  @if (saveError(); as message) {
+    <div class="error" role="alert">{{ message }}</div>
+  }
+
+  <form [formGroup]="form" (ngSubmit)="save()" novalidate>
+    <div class="field">
+      <label for="username">Username</label>
+      <input id="username" type="text" formControlName="username" autocomplete="off"
+        [attr.aria-invalid]="form.controls.username.touched && form.controls.username.invalid"
+        aria-describedby="username-error" />
+      <p class="field-error" id="username-error">
+        @if (form.controls.username.touched && form.controls.username.errors; as errors) {
+          @if (errors['required']) {
+            Username is required
+          } @else if (errors['usernameTaken']) {
+            Username already taken
+          } @else if (errors['server']) {
+            {{ errors['server'] }}
+          } @else if (errors['minlength'] || errors['maxlength']) {
+            Username must be 3–50 characters
+          } @else {
+            Use lowercase letters, digits, dots, underscores or hyphens
+          }
+        }
+      </p>
+    </div>
+
+    <div class="field">
+      <label for="years">Years of experience</label>
+      <input id="years" type="number" formControlName="yearsOfExperience" inputmode="decimal" min="0" max="60" step="0.5"
+        [attr.aria-invalid]="form.controls.yearsOfExperience.touched && form.controls.yearsOfExperience.invalid"
+        aria-describedby="years-error" />
+      <p class="field-error" id="years-error">
+        @if (form.controls.yearsOfExperience.touched && form.controls.yearsOfExperience.errors; as errors) {
+          @if (errors['required']) {
+            Years of experience is required
+          } @else if (errors['server']) {
+            {{ errors['server'] }}
+          } @else if (errors['min'] || errors['max']) {
+            Enter a number between 0 and 60
+          } @else {
+            Use steps of 0.5 years
+          }
+        }
+      </p>
+    </div>
+
+    <div class="field">
+      <label for="salary">Monthly salary</label>
+      <input id="salary" type="number" formControlName="monthlySalary" inputmode="decimal" step="0.01"
+        [attr.aria-invalid]="form.controls.monthlySalary.touched && form.controls.monthlySalary.invalid"
+        aria-describedby="salary-error" />
+      <p class="field-error" id="salary-error">
+        @if (form.controls.monthlySalary.touched && form.controls.monthlySalary.errors; as errors) {
+          @if (errors['required']) {
+            Monthly salary is required
+          } @else if (errors['server']) {
+            {{ errors['server'] }}
+          } @else if (errors['precision']) {
+            At most 10 digits before the decimal point and 2 decimals
+          } @else {
+            Salary must be greater than 0
+          }
+        }
+      </p>
+    </div>
+
+    <div class="actions">
+      <button type="button" (click)="suggest()" [disabled]="form.controls.yearsOfExperience.invalid">
+        Suggest salary
+      </button>
+      <button type="submit" class="primary" [disabled]="form.invalid || saving()">
+        {{ saving() ? 'Saving…' : 'Save' }}
+      </button>
+    </div>
+  </form>
+
+  <div class="suggestion-region" aria-live="polite">
+    @switch (suggestion().status) {
+      @case ('loading') {
+        <p class="status">Analyzing salaries…</p>
+      }
+      @case ('error') {
+        <div class="error">Could not get a salary suggestion. You can still enter a salary manually.</div>
+      }
+      @case ('ready') {
+        @let current = suggestion();
+        @if (current.status === 'ready') {
+          <section class="suggestion-card" [class.is-stale]="staleYears() !== null" aria-labelledby="suggestion-title">
+            <h2 id="suggestion-title">Suggested salary</h2>
+            <span class="badge" [class.badge-statistical]="current.recommendation.source === 'STATISTICAL'">
+              {{ badgeText() }}
+            </span>
+            <p class="amount">{{ current.recommendation.recommendedMonthlySalary | number: '1.2-2' }} / month</p>
+            <p>
+              Range {{ current.recommendation.rangeLow | number: '1.2-2' }} –
+              {{ current.recommendation.rangeHigh | number: '1.2-2' }}
+            </p>
+            <p>{{ current.recommendation.rationale }}</p>
+            <p class="muted">Based on {{ current.recommendation.basedOnUsers }} users with {{ current.recommendation.bandFromYears }} to
+              {{ current.recommendation.bandToYears }} years</p>
+            @if (staleYears() !== null) {
+              <p class="stale">Suggestion is for {{ staleYears() }} years — suggest again</p>
+            }
+            <button type="button" (click)="useSuggestedSalary()">Use this salary</button>
+          </section>
+        }
+      }
+    }
+  </div>
+</main>
